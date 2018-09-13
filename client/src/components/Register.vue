@@ -5,7 +5,7 @@
           <v-toolbar flat dark dense color="primary">
             <v-toolbar-title>Register</v-toolbar-title>
           </v-toolbar>
-          <v-form class="pr-4 pl-4">
+          <v-form class="pr-4 pl-4" autocomplete="off">
             <v-text-field
               v-model="email"
               label="Email"
@@ -14,6 +14,8 @@
             <v-text-field
               v-model="password"
               label="Password"
+              type="Password"
+              autocomplete="new-password"
               required
             ></v-text-field>
             <div class="errormsg" v-html="error" />
@@ -37,10 +39,12 @@ export default {
   methods: {
     async register () {
       try {
-        await AuthenticationService.register({
+        const response = await AuthenticationService.register({
           email: this.email,
           password: this.password
         })
+        this.$store.dispatch('setToken', response.data.token)
+        this.$store.dispatch('setUser', response.data.user)
       } catch (err) {
         this.error = err.response.data.error
       }
